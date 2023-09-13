@@ -9,7 +9,9 @@ module "labels" {
   repository  = var.repository
 }
 
+
 #Subnet
+
 resource "azurerm_subnet" "subnet" {
   count                                         = var.enable && var.specific_name_subnet == false ? length(var.subnet_names) : 0
   name                                          = "${var.name}-${var.subnet_names[count.index]}"
