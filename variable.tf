@@ -8,7 +8,7 @@ variable "name" {
 
 variable "repository" {
   type        = string
-  default     = "https://github.com/opsstation/terraform-azure-subnet.git"
+  default     = "https://github.com/opsstation/terraform-azure-subnet"
   description = "Terraform current module repo"
 
   validation {
@@ -28,24 +28,6 @@ variable "label_order" {
   type        = list(any)
   default     = ["name", "environment"]
   description = "Label order, e.g. `name`,`application`."
-}
-
-variable "attributes" {
-  type        = list(any)
-  default     = []
-  description = "Additional attributes (e.g. `1`)."
-}
-
-variable "delimiter" {
-  type        = string
-  default     = "-"
-  description = "Delimiter to be used between `organization`, `environment`, `name` and `attributes`."
-}
-
-variable "tags" {
-  type        = map(any)
-  default     = {}
-  description = "Additional tags (e.g. map(`BusinessUnit`,`XYZ`)."
 }
 
 variable "managedby" {

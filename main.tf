@@ -1,7 +1,7 @@
 ##############
 
 module "labels" {
-  source      = "git::git@github.com:opsstation/terraform-azure-labels.git"
+  source      = "git::https://github.com/opsstation/terraform-azure-labels.git?ref=v1.0.0"
   name        = var.name
   environment = var.environment
   managedby   = var.managedby
@@ -88,14 +88,14 @@ resource "azurerm_nat_gateway" "natgw" {
 
 resource "azurerm_nat_gateway_public_ip_association" "pip_assoc" {
   count                = var.create_nat_gateway ? 1 : 0
-  nat_gateway_id       = join("", azurerm_nat_gateway.natgw.*.id)
+  nat_gateway_id       = join("", azurerm_nat_gateway.natgw[*].id)
   public_ip_address_id = azurerm_public_ip.pip[0].id
 }
 
 resource "azurerm_subnet_nat_gateway_association" "subnet_assoc" {
-  count          = var.create_nat_gateway ? (var.specific_name_subnet == false ? length(azurerm_subnet.subnet.*.id) : length(azurerm_subnet.subnet2.*.id)) : 0
-  nat_gateway_id = join("", azurerm_nat_gateway.natgw.*.id)
-  subnet_id      = var.specific_name_subnet == false ? azurerm_subnet.subnet.*.id[count.index] : azurerm_subnet.subnet2.*.id[count.index]
+  count          = var.create_nat_gateway ? (var.specific_name_subnet == false ? length(azurerm_subnet.subnet[*].id) : length(azurerm_subnet.subnet2[*].id)) : 0
+  nat_gateway_id = join("", azurerm_nat_gateway.natgw[*].id)
+  subnet_id      = var.specific_name_subnet == false ? azurerm_subnet.subnet[*].id[count.index] : azurerm_subnet.subnet2[*].id[count.index]
 }
 
 #Route Table
@@ -119,12 +119,12 @@ resource "azurerm_route_table" "rt" {
 
 resource "azurerm_subnet_route_table_association" "main" {
   count          = var.enable && var.enable_route_table && var.specific_name_subnet == false ? length(var.subnet_prefixes) : 0
-  subnet_id      = element(azurerm_subnet.subnet.*.id, count.index)
-  route_table_id = join("", azurerm_route_table.rt.*.id)
+  subnet_id      = element(azurerm_subnet.subnet[*].id, count.index)
+  route_table_id = join("", azurerm_route_table.rt[*].id)
 }
 
 resource "azurerm_subnet_route_table_association" "main2" {
   count          = var.enable && var.enable_route_table && var.specific_name_subnet ? length(var.subnet_prefixes) : 0
-  subnet_id      = element(azurerm_subnet.subnet2.*.id, count.index)
-  route_table_id = join("", azurerm_route_table.rt.*.id)
+  subnet_id      = element(azurerm_subnet.subnet2[*].id, count.index)
+  route_table_id = join("", azurerm_route_table.rt[*].id)
 }
